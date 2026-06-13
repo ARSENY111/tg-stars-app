@@ -81,3 +81,90 @@ function updateOnline() {
 }
 updateOnline();
 setInterval(updateOnline, 5000);
+
+// Переменные для кошелька
+const btnDepositOpen = document.getElementById('btn-deposit-open');
+const btnWithdrawOpen = document.getElementById('btn-withdraw-open');
+const modalDeposit = document.getElementById('modal-deposit');
+const modalWithdraw = document.getElementById('modal-withdraw');
+const modalOverlay = document.getElementById('modal-overlay');
+
+const btnDepositConfirm = document.getElementById('btn-deposit-confirm');
+const btnWithdrawConfirm = document.getElementById('btn-withdraw-confirm');
+
+// Функции открытия модальных окон
+function openModal(modal) {
+    modalOverlay.classList.remove('hidden');
+    modal.classList.remove('hidden');
+    setTimeout(() => {
+        modalOverlay.style.opacity = '1';
+        modal.style.transform = 'translateY(0)';
+    }, 10);
+}
+
+function closeModal() {
+    modalDeposit.style.transform = 'translateY(full)';
+    modalWithdraw.style.transform = 'translateY(full)';
+    modalOverlay.style.opacity = '0';
+    setTimeout(() => {
+        modalDeposit.classList.add('hidden');
+        modalWithdraw.classList.add('hidden');
+        modalOverlay.classList.add('hidden');
+    }, 300);
+}
+
+btnDepositOpen.addEventListener('click', () => {
+    if (tg.HapticFeedback) tg.HapticFeedback.impactOccurred('light');
+    openModal(modalDeposit);
+});
+
+btnWithdrawOpen.addEventListener('click', () => {
+    if (tg.HapticFeedback) tg.HapticFeedback.impactOccurred('light');
+    openModal(modalWithdraw);
+});
+
+modalOverlay.addEventListener('click', closeModal);
+
+// ЛОГИКА ПОПОЛНЕНИЯ (Интеграция с Telegram Stars)
+btnDepositConfirm.addEventListener('click', () => {
+    const amount = document.getElementById('input-deposit').value;
+    if (!amount || amount <= 0) {
+        alert('Введите корректное количество Stars');
+        return;
+    }
+
+    if (tg.HapticFeedback) tg.HapticFeedback.notificationOccurred('success');
+
+    // Важно: Сама платежка вызывается через бота на сервере, 
+    // но мы можем отправить боту команду, что пользователь хочет купить Stars.
+    tg.sendData(JSON.stringify({
+        action: "deposit",
+        stars_amount: parseInt(amount)
+    }));
+    
+    closeModal();
+    tg.close(); // Закрываем Mini App, бот сразу пришлет инвойс на оплату в чат!
+});
+
+// ЛОГИКА ВЫВОДА
+btnWithdrawConfirm.addEventListener('click', () => {
+    const wallet = document.getElementById('input-withdraw-wallet').value;
+    const amount = document.getElementById('input-withdraw-amount').value;
+
+    if (!wallet || !amount || amount <= 0) {
+        alert('Заполните все поля корректно');
+        return;
+    }
+
+    if (tg.HapticFeedback) tg.HapticFeedback.notificationOccurred('warning');
+
+    // Передаем боту данные о заявке на вывод
+    tg.sendData(JSON.stringify({
+        action: "withdraw",
+        wallet: wallet,
+        stars_amount: parseInt(amount)
+    }));
+
+    alert('Заявка на вывод отправлена боту!');
+    closeModal();
+});
