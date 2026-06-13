@@ -14,12 +14,10 @@
         
         <div class="flex justify-center w-full mt-2">
             <div id="app-header" class="flex items-center justify-between w-full bg-island h-11 px-2 rounded-full border border-[#363636] shadow-lg shadow-black/50">
-                
                 <div class="flex items-center gap-1.5 pl-2">
                     <span class="w-2 h-2 rounded-full bg-[#34c759] shadow-sm shadow-[#34c759]/50 animate-pulse"></span>
                     <span id="online-count" class="text-[11px] font-bold text-[#34c759] tracking-tight">10</span>
                 </div>
-
                 <div class="h-8 px-3 rounded-full bg-[#363636] border border-[#474747] flex items-center gap-1 text-xs font-bold text-white">
                     <span>⭐</span>
                     <span id="balance-stars">1,250</span>
@@ -27,12 +25,50 @@
             </div>
         </div>
 
-        <div id="main-content" class="my-auto w-full flex flex-col items-center justify-center">
+        <div id="main-content" class="my-auto w-full flex flex-col items-center justify-center overflow-y-auto max-h-[70vh]">
+            
+            <div id="screen-main" class="w-full flex flex-col items-center justify-center fade-in">
+                <p class="text-[#7a7a7a] text-sm font-medium">Экран игры (Тут пока пусто)</p>
             </div>
 
-        <div class="flex justify-center w-full mb-2">
-            <div id="app-footer" class="flex items-center justify-start w-full bg-island h-11 px-2 rounded-full border border-[#363636] shadow-lg shadow-black/50">
+            <div id="screen-profile" class="w-full flex flex-col hidden fade-inpx-4">
                 
+                <div class="bg-island rounded-2xl border border-[#363636] p-5 w-full flex flex-col items-center shadow-lg">
+                    <div id="user-avatar" class="w-20 h-20 rounded-full border-2 border-[#474747] flex items-center justify-center text-3xl font-bold text-white mb-3 shadow-md">
+                        ?
+                    </div>
+                    <h2 id="user-name" class="text-lg font-bold text-white leading-tight">Загрузка...</h2>
+                    <p id="user-username" class="text-xs text-[#7a7a7a] mt-0.5">@username</p>
+
+                    <div class="w-full h-[1px] bg-[#363636] my-4"></div>
+
+                    <div class="w-full grid grid-cols-2 gap-3">
+                        <div class="flex flex-col items-center p-2.5 bg-[#1c1c1c] rounded-xl border border-[#2d2d2d]">
+                            <span class="text-xs text-[#7a7a7a] font-medium">Баланс</span>
+                            <span class="text-sm font-bold text-white mt-0.5 flex items-center gap-1">⭐ 1,250</span>
+                        </div>
+                        <div class="flex flex-col items-center p-2.5 bg-[#1c1c1c] rounded-xl border border-[#2d2d2d]">
+                            <span class="text-xs text-[#7a7a7a] font-medium">Инвентарь</span>
+                            <span class="text-sm font-bold text-[#34c759] mt-0.5">0 предметов</span>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+
+        </div>
+
+        <div class="flex justify-center w-full mb-2">
+            <div id="app-footer" class="flex items-center justify-between w-full bg-island h-11 px-2 rounded-full border border-[#363636] shadow-lg shadow-black/50 relative">
+                
+                <button id="inventory-btn" class="tap-target w-8 h-8 rounded-full bg-[#363636] border border-[#474747] flex items-center justify-center text-sm cursor-pointer">
+                    💼
+                </button>
+                
+                <button id="home-btn" class="tap-target w-12 h-12 rounded-full bg-[#2f93e4] border-2 border-black flex items-center justify-center text-lg cursor-pointer absolute left-1/2 -translate-x-1/2 -top-3 shadow-lg shadow-blue-950/40 text-white font-bold">
+                    🏠
+                </button>
+
                 <button id="account-btn" class="tap-target w-8 h-8 rounded-full bg-[#363636] border border-[#474747] flex items-center justify-center text-sm cursor-pointer">
                     👤
                 </button>
