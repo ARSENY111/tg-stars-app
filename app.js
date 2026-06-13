@@ -73,30 +73,39 @@ setInterval(updateOnline, 5000);
 const balanceEl = document.getElementById('stars-balance');
 const buyBtn = document.getElementById('buy-stars-btn');
 
-// Загружаем баланс из локального хранилища (или 0 по дефолту)
+// Загружаем баланс из локального хранилища (для визуализации)
 let currentBalance = parseInt(localStorage.getItem('stars_balance')) || 0;
 balanceEl.innerText = currentBalance;
 
-buyBtn.addEventListener('click', async () => {
+buyBtn.addEventListener('click', () => {
     if (tg.HapticFeedback) tg.HapticFeedback.impactOccurred('medium');
     
-    tg.showPopup({
-        title: 'Пополнение баланса',
-        message: 'Вы хотите купить 50 Telegram Stars?',
-        buttons: [
-            {id: 'buy', type: 'default', text: 'Купить (Тест)'},
-            {id: 'cancel', type: 'cancel', text: 'Отмена'}
-        ]
-    }, function(buttonId) {
-        if (buttonId === 'buy') {
-            // Имитируем успешный ответ от Telegram Stars Invoice API
-            tg.showToast("Платеж успешно обработан! +50 ⭐️");
-            
-            currentBalance += 50;
-            localStorage.setItem('stars_balance', currentBalance);
-            balanceEl.innerText = currentBalance;
-            
-            if (tg.HapticFeedback) tg.HapticFeedback.notificationOccurred('success');
-        }
-    });
+    // Передаем боту команду на создание инвойса.
+    // ВАЖНО: tg.sendData работает ТОЛЬКО если Web App открыт через Reply-кнопку.
+    // Если открыт через Inline-кнопку, лучше использовать отправку ссылки из бота,
+    // но для простоты интеграции покажем нативный метод:
+    try {
+        tg.sendData(JSON.stringify({ action: "buy_stars", amount: 50 }));
+        tg.close(); // Закрываем Mini App, бот сразу пришлет инвойс в чат
+    } catch (e) {
+        // Альтернативный вариант, если sendData недоступен (например, в десктопе или инлайне)
+        tg.showPopup({
+            title: "Инвойс",
+            message: "Для генерации реального счета, пожалуйста, напиши боту команду /pay в чат."
+        });
+    }
+});
+
+// Обработчик события закрытия инвойса (если ссылка открывается прямо внутри Web App)
+tg.onEvent('invoiceClosed', (object) => {
+    if (object.status === 'paid') {
+        tg.showToast("🎉 Оплата успешна! Баланс обновлен.");
+        currentBalance += 50;
+        localStorage.setItem('stars_balance', currentBalance);
+        balanceEl.innerText = currentBalance;
+        if (tg.HapticFeedback) tg.HapticFeedback.notificationOccurred('success');
+    } else if (object.status === 'cancelled' || object.status === 'failed') {
+        tg.showToast("❌ Оплата отменена или произошла ошибка.");
+        if (tg.HapticFeedback) tg.HapticFeedback.notificationOccurred('error');
+    }
 });
