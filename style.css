@@ -1,0 +1,19 @@
+/* Нативная анимация нажатия кнопок */
+.tap-target {
+    transition: transform 0.08s ease, filter 0.08s ease;
+}
+
+.tap-target:active {
+    transform: scale(0.92);
+    filter: brightness(0.85);
+}
+
+/* Скрываем системные скроллбары */
+::-webkit-scrollbar {
+    display: none;
+}
+
+/* Цвет для наших островов */
+.bg-island {
+    background-color: #242424;
+}
