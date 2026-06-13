@@ -70,28 +70,34 @@ function closeModal() {
     }, 300);
 }
 
-btnDepositOpen.addEventListener('click', () => { if (tg.HapticFeedback) tg.HapticFeedback.impactOccurred('light'); openModal(modalDeposit); });
+btnDepositOpen.addEventListener('click', () => { 
+    if (tg.HapticFeedback) tg.HapticFeedback.impactOccurred('light'); 
+    openModal(modalDeposit); 
+});
 modalOverlay.addEventListener('click', closeModal);
 
-// ПОДТВЕРЖДЕНИЕ ПОПОЛНЕНИЯ
+// ПОДТВЕРЖДЕНИЕ ПОПОЛНЕНИЯ (ИСПРАВЛЕНО)
 btnDepositConfirm.addEventListener('click', () => {
-    const amount = document.getElementById('input-deposit').value;
-    if (!amount || amount <= 0) { alert('Введите корректное количество Stars'); return; }
+    const amount = parseInt(document.getElementById('input-deposit').value);
+    if (!amount || amount <= 0) { 
+        alert('Введите корректное количество Stars'); 
+        return; 
+    }
     
     if (tg.HapticFeedback) tg.HapticFeedback.notificationOccurred('success');
     
-    // Получаем юзернейм бота динамически из Telegram SDK
-    const botUser = tg.initDataUnsafe?.receiver?.username || "ogeotvetu_bot"; 
+    // Формируем JSON-пакет для передачи боту
+    const dataToSend = {
+        action: "deposit",
+        stars_amount: amount
+    };
     
-    // Генерируем глубокую ссылку (Deep Link), которая передаст боту команду на пополнение
-    const deepLink = `https://t.me/${botUser}?start=pay_${amount}`;
-    
-    // Нативно открываем ссылку внутри Telegram (Mini App закроется, и откроется чат с готовой командой)
-    tg.openTelegramLink(deepLink);
+    // Отправляем данные боту (кнопка в чате закроет приложение и бот мгновенно выдаст инвойс)
+    tg.sendData(JSON.stringify(dataToSend));
     
     closeModal();
-    tg.close();
 });
+
 // --- НАВИГАЦИЯ МЕЖДУ ЭКРАНАМИ ---
 accountBtn.addEventListener('click', () => {
     if (tg.HapticFeedback) tg.HapticFeedback.impactOccurred('light');
