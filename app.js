@@ -80,10 +80,6 @@ balanceEl.innerText = currentBalance;
 buyBtn.addEventListener('click', async () => {
     if (tg.HapticFeedback) tg.HapticFeedback.impactOccurred('medium');
     
-    // В реальном продакшене ты делаешь fetch-запрос к своему серверу/боту,
-    // чтобы бот сгенерировал Invoice Link через createInvoiceLink.
-    // Для демонстрации и тестирования мы покажем, как обрабатывается статус платежа.
-    
     tg.showPopup({
         title: 'Пополнение баланса',
         message: 'Вы хотите купить 50 Telegram Stars?',
@@ -94,8 +90,6 @@ buyBtn.addEventListener('click', async () => {
     }, function(buttonId) {
         if (buttonId === 'buy') {
             // Имитируем успешный ответ от Telegram Stars Invoice API
-            // На практике здесь вызывается: tg.openInvoice(invoice_url, function(status) { ... })
-            
             tg.showToast("Платеж успешно обработан! +50 ⭐️");
             
             currentBalance += 50;
