@@ -5,46 +5,43 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>Stars App</title>
     <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
+    <link rel="stylesheet" href="style.css">
     <script src="https://telegram.org/js/telegram-web-app.js"></script>
-    <style>
-        .tap-target {
-            transition: transform 0.08s ease, opacity 0.08s ease;
-        }
-        .tap-target:active {
-            transform: scale(0.97);
-            opacity: 0.85;
-        }
-        ::-webkit-scrollbar { display: none; }
-    </style>
 </head>
 <body class="bg-black text-[#f5f5f5] font-sans antialiased select-none overflow-hidden">
 
     <div class="flex flex-col h-screen justify-between p-4 max-w-md mx-auto">
         
-        <div id="app-header" class="flex justify-between items-center bg-[#1a1a1a] px-4 py-3 rounded-xl border border-[#2d2d2d]">
-            <div>
-                <p class="text-[11px] uppercase tracking-wider text-[#7a7a7a] font-bold">Баланс</p>
-                <div class="flex items-center gap-1.5 mt-0.5">
-                    <span class="text-base">⭐</span>
-                    <span id="balance-stars" class="text-base font-bold text-white tracking-tight">0</span>
+        <div class="flex justify-center w-full mt-2">
+            <div id="app-header" class="flex items-center justify-between w-2/3 bg-island h-11 px-2 rounded-full border border-[#363636] shadow-lg shadow-black/50">
+                
+                <div class="flex items-center gap-1.5 pl-2">
+                    <span class="w-2 h-2 rounded-full bg-[#34c759] shadow-sm shadow-[#34c759]/50 animate-pulse"></span>
+                    <span id="online-count" class="text-[11px] font-medium text-[#a3a3a3] tracking-tight">10</span>
                 </div>
-            </div>
-            <div id="balance-nft" class="bg-[#262626] px-3 py-1.5 rounded-lg text-xs font-medium text-[#a3a3a3] border border-[#333333]">
-                🎁 0 Подарков
+
+                <div class="h-8 px-3 rounded-full bg-[#363636] border border-[#474747] flex items-center gap-1 text-xs font-bold text-white">
+                    <span>⭐</span>
+                    <span id="balance-stars">1,250</span>
+                </div>
             </div>
         </div>
 
         <div id="main-content" class="my-auto w-full flex flex-col items-center justify-center">
             </div>
 
-        <div id="app-footer" class="w-full flex flex-col gap-2">
+        <div class="flex justify-center w-full mb-2">
+            <div id="app-footer" class="flex items-center justify-start w-2/3 bg-island h-11 px-2 rounded-full border border-[#363636] shadow-lg shadow-black/50">
+                
+                <button id="account-btn" class="tap-target w-8 h-8 rounded-full bg-[#363636] border border-[#474747] flex items-center justify-center text-sm cursor-pointer">
+                    👤
+                </button>
+                
             </div>
+        </div>
 
     </div>
 
-    <script>
-        const tg = window.Telegram.WebApp;
-        tg.expand();
-    </script>
+    <script src="app.js"></script>
 </body>
 </html>
