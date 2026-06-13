@@ -80,11 +80,18 @@ btnDepositConfirm.addEventListener('click', () => {
     
     if (tg.HapticFeedback) tg.HapticFeedback.notificationOccurred('success');
     
-    // Отправляем данные боту
-    tg.sendData(JSON.stringify({ action: "deposit", stars_amount: parseInt(amount) }));
+    // Получаем юзернейм бота динамически из Telegram SDK
+    const botUser = tg.initDataUnsafe?.receiver?.username || "ogeotvetu_bot"; 
+    
+    // Генерируем глубокую ссылку (Deep Link), которая передаст боту команду на пополнение
+    const deepLink = `https://t.me/${botUser}?start=pay_${amount}`;
+    
+    // Нативно открываем ссылку внутри Telegram (Mini App закроется, и откроется чат с готовой командой)
+    tg.openTelegramLink(deepLink);
+    
     closeModal();
+    tg.close();
 });
-
 // --- НАВИГАЦИЯ МЕЖДУ ЭКРАНАМИ ---
 accountBtn.addEventListener('click', () => {
     if (tg.HapticFeedback) tg.HapticFeedback.impactOccurred('light');
