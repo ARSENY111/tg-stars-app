@@ -9,18 +9,14 @@ const screenMain = document.getElementById('screen-main');
 const screenProfile = document.getElementById('screen-profile');
 
 // --- ДИНАМИЧЕСКИЙ БАЛАНС ИЗ URL ---
-// Читаем параметры, которые бот прикрепил к ссылке (?balance=...)
 const urlParams = new URLSearchParams(window.location.search);
 let userBalance = parseInt(urlParams.get('balance')) || 0;
 
-// Функция обновления баланса во всех местах интерфейса
 function refreshBalanceUI() {
     document.getElementById('balance-stars').innerText = userBalance.toLocaleString();
     document.getElementById('profile-balance').innerText = userBalance.toLocaleString();
 }
-// Запускаем обновление при старте
 refreshBalanceUI();
-
 
 // --- НАСТРОЙКА ПРОФИЛЯ ПОЛЬЗОВАТЕЛЯ ---
 const avatarColors = [
@@ -50,14 +46,11 @@ if (tg.initDataUnsafe && tg.initDataUnsafe.user) {
     avatarEl.style.background = avatarColors[3];
 }
 
-// --- УПРАВЛЕНИЕ МОДАЛЬНЫМИ ОКНАМИ ---
+// --- УПРАВЛЕНИЕ МОДАЛЬНЫМ ОКНОМ ПОПОЛНЕНИЯ ---
 const btnDepositOpen = document.getElementById('btn-deposit-open');
-const btnWithdrawOpen = document.getElementById('btn-withdraw-open');
 const modalDeposit = document.getElementById('modal-deposit');
-const modalWithdraw = document.getElementById('modal-withdraw');
 const modalOverlay = document.getElementById('modal-overlay');
 const btnDepositConfirm = document.getElementById('btn-deposit-confirm');
-const btnWithdrawConfirm = document.getElementById('btn-withdraw-confirm');
 
 function openModal(modal) {
     modalOverlay.classList.remove('hidden');
@@ -70,17 +63,14 @@ function openModal(modal) {
 
 function closeModal() {
     modalDeposit.style.transform = 'translateY(100%)';
-    modalWithdraw.style.transform = 'translateY(100%)';
     modalOverlay.style.opacity = '0';
     setTimeout(() => {
         modalDeposit.classList.add('hidden');
-        modalWithdraw.classList.add('hidden');
         modalOverlay.classList.add('hidden');
     }, 300);
 }
 
 btnDepositOpen.addEventListener('click', () => { if (tg.HapticFeedback) tg.HapticFeedback.impactOccurred('light'); openModal(modalDeposit); });
-btnWithdrawOpen.addEventListener('click', () => { if (tg.HapticFeedback) tg.HapticFeedback.impactOccurred('light'); openModal(modalWithdraw); });
 modalOverlay.addEventListener('click', closeModal);
 
 // ПОДТВЕРЖДЕНИЕ ПОПОЛНЕНИЯ
@@ -90,20 +80,8 @@ btnDepositConfirm.addEventListener('click', () => {
     
     if (tg.HapticFeedback) tg.HapticFeedback.notificationOccurred('success');
     
-    // Передаем команду боту
+    // Отправляем данные боту
     tg.sendData(JSON.stringify({ action: "deposit", stars_amount: parseInt(amount) }));
-    closeModal();
-});
-
-// ПОДТВЕРЖДЕНИЕ ВЫВОДА
-btnWithdrawConfirm.addEventListener('click', () => {
-    const amount = document.getElementById('input-withdraw-amount').value;
-    if (!amount || amount <= 0) { alert('Введите корректное количество Stars'); return; }
-    if (parseInt(amount) > userBalance) { alert('Недостаточно средств на балансе'); return; }
-
-    if (tg.HapticFeedback) tg.HapticFeedback.notificationOccurred('warning');
-
-    tg.sendData(JSON.stringify({ action: "withdraw_stars", stars_amount: parseInt(amount) }));
     closeModal();
 });
 
