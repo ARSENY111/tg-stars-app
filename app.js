@@ -8,16 +8,6 @@ const inventoryBtn = document.getElementById('inventory-btn');
 const screenMain = document.getElementById('screen-main');
 const screenProfile = document.getElementById('screen-profile');
 
-// --- ДИНАМИЧЕСКИЙ БАЛАНС ИЗ URL ---
-const urlParams = new URLSearchParams(window.location.search);
-let userBalance = parseInt(urlParams.get('balance')) || 0;
-
-function refreshBalanceUI() {
-    document.getElementById('balance-stars').innerText = userBalance.toLocaleString();
-    document.getElementById('profile-balance').innerText = userBalance.toLocaleString();
-}
-refreshBalanceUI();
-
 // --- НАСТРОЙКА ПРОФИЛЯ ПОЛЬЗОВАТЕЛЯ ---
 const avatarColors = [
     'linear-gradient(135deg, #ff9500, #ffcc00)',
@@ -45,58 +35,6 @@ if (tg.initDataUnsafe && tg.initDataUnsafe.user) {
     avatarEl.innerText = "Д";
     avatarEl.style.background = avatarColors[3];
 }
-
-// --- УПРАВЛЕНИЕ МОДАЛЬНЫМ ОКНОМ ПОПОЛНЕНИЯ ---
-const btnDepositOpen = document.getElementById('btn-deposit-open');
-const modalDeposit = document.getElementById('modal-deposit');
-const modalOverlay = document.getElementById('modal-overlay');
-const btnDepositConfirm = document.getElementById('btn-deposit-confirm');
-
-function openModal(modal) {
-    modalOverlay.classList.remove('hidden');
-    modal.classList.remove('hidden');
-    setTimeout(() => {
-        modalOverlay.style.opacity = '1';
-        modal.style.transform = 'translateY(0)';
-    }, 10);
-}
-
-function closeModal() {
-    modalDeposit.style.transform = 'translateY(100%)';
-    modalOverlay.style.opacity = '0';
-    setTimeout(() => {
-        modalDeposit.classList.add('hidden');
-        modalOverlay.classList.add('hidden');
-    }, 300);
-}
-
-btnDepositOpen.addEventListener('click', () => { 
-    if (tg.HapticFeedback) tg.HapticFeedback.impactOccurred('light'); 
-    openModal(modalDeposit); 
-});
-modalOverlay.addEventListener('click', closeModal);
-
-// ПОДТВЕРЖДЕНИЕ ПОПОЛНЕНИЯ (ИСПРАВЛЕНО)
-btnDepositConfirm.addEventListener('click', () => {
-    const amount = parseInt(document.getElementById('input-deposit').value);
-    if (!amount || amount <= 0) { 
-        alert('Введите корректное количество Stars'); 
-        return; 
-    }
-    
-    if (tg.HapticFeedback) tg.HapticFeedback.notificationOccurred('success');
-    
-    // Формируем JSON-пакет для передачи боту
-    const dataToSend = {
-        action: "deposit",
-        stars_amount: amount
-    };
-    
-    // Отправляем данные боту (кнопка в чате закроет приложение и бот мгновенно выдаст инвойс)
-    tg.sendData(JSON.stringify(dataToSend));
-    
-    closeModal();
-});
 
 // --- НАВИГАЦИЯ МЕЖДУ ЭКРАНАМИ ---
 accountBtn.addEventListener('click', () => {
@@ -130,3 +68,41 @@ function updateOnline() {
 }
 updateOnline();
 setInterval(updateOnline, 5000);
+
+// --- ЛОГИКА БАЛАНСА И ОПЛАТЫ STARS ---
+const balanceEl = document.getElementById('stars-balance');
+const buyBtn = document.getElementById('buy-stars-btn');
+
+// Загружаем баланс из локального хранилища (или 0 по дефолту)
+let currentBalance = parseInt(localStorage.getItem('stars_balance')) || 0;
+balanceEl.innerText = currentBalance;
+
+buyBtn.addEventListener('click', async () => {
+    if (tg.HapticFeedback) tg.HapticFeedback.impactOccurred('medium');
+    
+    // В реальном продакшене ты делаешь fetch-запрос к своему серверу/боту,
+    // чтобы бот сгенерировал Invoice Link через createInvoiceLink.
+    // Для демонстрации и тестирования мы покажем, как обрабатывается статус платежа.
+    
+    tg.showPopup({
+        title: 'Пополнение баланса',
+        message: 'Вы хотите купить 50 Telegram Stars?',
+        buttons: [
+            {id: 'buy', type: 'default', text: 'Купить (Тест)'},
+            {id: 'cancel', type: 'cancel', text: 'Отмена'}
+        ]
+    }, function(buttonId) {
+        if (buttonId === 'buy') {
+            // Имитируем успешный ответ от Telegram Stars Invoice API
+            // На практике здесь вызывается: tg.openInvoice(invoice_url, function(status) { ... })
+            
+            tg.showToast("Платеж успешно обработан! +50 ⭐️");
+            
+            currentBalance += 50;
+            localStorage.setItem('stars_balance', currentBalance);
+            balanceEl.innerText = currentBalance;
+            
+            if (tg.HapticFeedback) tg.HapticFeedback.notificationOccurred('success');
+        }
+    });
+});
