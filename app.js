@@ -68,44 +68,62 @@ function updateOnline() {
 }
 updateOnline();
 setInterval(updateOnline, 5000);
-
 // --- ЛОГИКА БАЛАНСА И ОПЛАТЫ STARS ---
 const balanceEl = document.getElementById('stars-balance');
 const buyBtn = document.getElementById('buy-stars-btn');
+const starsInput = document.getElementById('stars-input');
 
 // Загружаем баланс из локального хранилища (для визуализации)
 let currentBalance = parseInt(localStorage.getItem('stars_balance')) || 0;
 balanceEl.innerText = currentBalance;
 
+// Живое обновление текста на кнопке при изменении инпута
+starsInput.addEventListener('input', () => {
+    let value = parseInt(starsInput.value);
+    if (isNaN(value) || value < 1) {
+        buyBtn.innerText = `Купить 0 ⭐️`;
+        buyBtn.disabled = true;
+        buyBtn.classList.add('opacity-50');
+    } else {
+        buyBtn.innerText = `Купить ${value} ⭐️`;
+        buyBtn.disabled = false;
+        buyBtn.classList.remove('opacity-50');
+    }
+});
+
+// Отправка кастомного инвойса в бот
 buyBtn.addEventListener('click', () => {
+    const amount = parseInt(starsInput.value);
+    
+    // Проверка на дурака (валидация на клиенте)
+    if (isNaN(amount) || amount < 1) {
+        tg.showPopup({ title: "Ошибка", message: "Пожалуйста, введите корректное число звёзд." });
+        return;
+    }
+
     if (tg.HapticFeedback) tg.HapticFeedback.impactOccurred('medium');
     
-    // Передаем боту команду на создание инвойса.
-    // ВАЖНО: tg.sendData работает ТОЛЬКО если Web App открыт через Reply-кнопку.
-    // Если открыт через Inline-кнопку, лучше использовать отправку ссылки из бота,
-    // но для простоты интеграции покажем нативный метод:
     try {
-        tg.sendData(JSON.stringify({ action: "buy_stars", amount: 50 }));
-        tg.close(); // Закрываем Mini App, бот сразу пришлет инвойс в чат
+        // Отправляем боту динамически введенную сумму
+        tg.sendData(JSON.stringify({ action: "buy_stars", amount: amount }));
+        tg.close(); 
     } catch (e) {
-        // Альтернативный вариант, если sendData недоступен (например, в десктопе или инлайне)
         tg.showPopup({
             title: "Инвойс",
-            message: "Для генерации реального счета, пожалуйста, напиши боту команду /pay в чат."
+            message: `Для генерации реального счета на ${amount} ⭐️, напиши боту команду /pay в чат.`
         });
     }
 });
 
-// Обработчик события закрытия инвойса (если ссылка открывается прямо внутри Web App)
+// Нативный обработчик успешного закрытия инвойса внутри Web App
 tg.onEvent('invoiceClosed', (object) => {
     if (object.status === 'paid') {
         tg.showToast("🎉 Оплата успешна! Баланс обновлен.");
-        currentBalance += 50;
+        // Считываем, сколько запрашивали (или берем из контекста)
+        const addedAmount = parseInt(starsInput.value) || 50;
+        currentBalance += addedAmount;
         localStorage.setItem('stars_balance', currentBalance);
         balanceEl.innerText = currentBalance;
         if (tg.HapticFeedback) tg.HapticFeedback.notificationOccurred('success');
-    } else if (object.status === 'cancelled' || object.status === 'failed') {
-        tg.showToast("❌ Оплата отменена или произошла ошибка.");
-        if (tg.HapticFeedback) tg.HapticFeedback.notificationOccurred('error');
     }
 });
