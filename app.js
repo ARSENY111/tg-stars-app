@@ -147,24 +147,25 @@ btnDepositConfirm.addEventListener('click', () => {
 });
 
 // ЛОГИКА ВЫВОДА
+// ЛОГИКА ВЫВОДА (Только Stars)
 btnWithdrawConfirm.addEventListener('click', () => {
-    const wallet = document.getElementById('input-withdraw-wallet').value;
     const amount = document.getElementById('input-withdraw-amount').value;
 
-    if (!wallet || !amount || amount <= 0) {
-        alert('Заполните все поля корректно');
+    if (!amount || amount <= 0) {
+        alert('Введите корректное количество Stars');
         return;
     }
 
-    if (tg.HapticFeedback) tg.HapticFeedback.notificationOccurred('warning');
+    if (tg.HapticFeedback) {
+        tg.HapticFeedback.notificationOccurred('warning');
+    }
 
-    // Передаем боту данные о заявке на вывод
+    // Передаем боту данные о заявке на вывод исключительно в Stars
     tg.sendData(JSON.stringify({
-        action: "withdraw",
-        wallet: wallet,
+        action: "withdraw_stars",
         stars_amount: parseInt(amount)
     }));
 
-    alert('Заявка на вывод отправлена боту!');
+    alert('Заявка на вывод Stars отправлена боту!');
     closeModal();
 });
