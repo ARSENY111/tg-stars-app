@@ -31,7 +31,7 @@
                 <p class="text-[#7a7a7a] text-sm font-medium">Экран игры (Тут пока пусто)</p>
             </div>
 
-            <div id="screen-profile" class="w-full flex flex-col hidden fade-in px-2 mt-2">
+           <div id="screen-profile" class="w-full flex flex-col hidden fade-in px-2 mt-2">
                 <div class="bg-island rounded-2xl border border-[#363636] p-5 w-full flex flex-col items-center shadow-lg relative">
                     
                     <div id="user-avatar" class="w-20 h-20 rounded-full border-2 border-[#474747] flex items-center justify-center text-3xl font-bold text-white mb-3 shadow-md">
@@ -46,17 +46,12 @@
                     <div class="w-full space-y-3">
                         <div class="flex flex-col items-center p-3 bg-[#1c1c1c] rounded-xl border border-[#2d2d2d] w-full">
                             <span class="text-xs text-[#7a7a7a] font-medium">Баланс аккаунта</span>
-                            <span class="text-sm font-bold text-white mt-0.5 flex items-center gap-1">⭐ <span id="profile-balance">1,250</span></span>
+                            <span class="text-sm font-bold text-white mt-0.5 flex items-center gap-1">⭐ <span id="profile-balance">0</span></span>
                         </div>
 
-                        <div class="grid grid-cols-2 gap-2">
-                            <button id="btn-deposit-open" class="tap-target bg-[#34c759] text-black font-bold py-2.5 rounded-xl text-xs cursor-pointer tracking-wide text-center">
-                                Пополнить
-                            </button>
-                            <button id="btn-withdraw-open" class="tap-target bg-[#363636] border border-[#474747] text-white font-bold py-2.5 rounded-xl text-xs cursor-pointer tracking-wide text-center">
-                                Вывести
-                            </button>
-                        </div>
+                        <button id="btn-deposit-open" class="tap-target w-full bg-[#34c759] text-black font-bold py-3 rounded-xl text-xs cursor-pointer tracking-wide text-center">
+                            Пополнить баланс
+                        </button>
                     </div>
                     
                 </div>
@@ -68,18 +63,6 @@
                         <input type="number" id="input-deposit" placeholder="Количество Stars (например: 50)" class="w-full bg-black border border-[#363636] rounded-xl p-3 text-sm text-white text-center focus:outline-none focus:border-[#34c759]">
                         <button id="btn-deposit-confirm" class="tap-target w-full bg-[#34c759] text-black font-bold py-3 rounded-xl text-sm cursor-pointer">
                             Оплатить через Telegram Stars
-                        </button>
-                    </div>
-                </div>
-
-                <div id="modal-withdraw" class="hidden fixed inset-x-0 bottom-0 bg-[#1c1c1c] border-t border-[#363636] rounded-t-3xl p-6 z-50 shadow-2xl transition-transform duration-300 transform translate-y-full">
-                    <div class="w-12 h-1 bg-[#363636] rounded-full mx-auto mb-4"></div>
-                    <h3 class="text-md font-bold text-center mb-2 text-white">Вывод Stars</h3>
-                    <p class="text-[11px] text-[#7a7a7a] text-center mb-4">Вывод средств осуществляется в виде Telegram Stars (трансфером или ваучером)</p>
-                    <div class="space-y-3">
-                        <input type="number" id="input-withdraw-amount" placeholder="Количество Stars для вывода" class="w-full bg-black border border-[#363636] rounded-xl p-3 text-sm text-white text-center focus:outline-none focus:border-[#2f93e4]">
-                        <button id="btn-withdraw-confirm" class="tap-target w-full bg-[#2f93e4] text-white font-bold py-3 rounded-xl text-sm cursor-pointer">
-                            Создать заявку на вывод
                         </button>
                     </div>
                 </div>
